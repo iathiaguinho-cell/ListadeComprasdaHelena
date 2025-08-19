@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras da Helena</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lista de Compras da Helena</h1>
+            <!-- BOTÃO DA IA -->
+            <button id="optimize-button" class="optimize-btn">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Otimizar Compra com IA
+            </button>
+        </div>
+        <div class="input-container">
+            <input type="text" id="item-input" placeholder="Digite um item...">
+            <button id="add-btn">Adicionar</button>
+        </div>
+        
+        <div class="listas-container">
+            <div class="lista">
+                <h2>A Comprar</h2>
+                <ul id="lista-a-comprar">
+                    <!-- Itens a comprar serão adicionados aqui -->
+                </ul>
+            </div>
+            <div class="lista">
+                <h2>Comprados</h2>
+                <ul id="lista-comprados">
+                    <!-- Itens comprados serão adicionados aqui -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- JANELA DE RESULTADOS DA IA (MODAL) -->
+    <div id="ai-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2><i class="fa-solid fa-robot"></i> Análise do Assistente de Compras</h2>
+            <div id="ai-results-container">
+                <!-- Os resultados da IA aparecerão aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
