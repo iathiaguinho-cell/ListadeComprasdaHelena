@@ -14,8 +14,8 @@
     <style>
         :root {
             --cor-fundo: #dee2e6; --cor-container: #f8f9fa; --cor-primaria: #007aff;
-            --cor-sucesso: #34c759; --cor-perigo: #ff3b30; --cor-aviso: #ff9500;
-            --cor-texto-principal: #212529; --cor-texto-secundario: #6c757d;
+            --cor-secundaria: #5856d6; --cor-sucesso: #34c759; --cor-perigo: #ff3b30;
+            --cor-aviso: #ff9500; --cor-texto-principal: #212529; --cor-texto-secundario: #6c757d;
             --cor-borda: #ced4da; --sombra-painel: 0 4px 12px rgba(0, 0, 0, 0.08);
             --raio-borda: 16px; --font-principal: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             --font-mono: 'Courier New', monospace;
@@ -41,11 +41,13 @@
         .btn{padding:12px;border:none;border-radius:10px;font-size:1.5rem;font-weight:600;cursor:pointer;transition:all 0.2s;color:white;display:flex;align-items:center;justify-content:center;width:50px;height:50px;flex-shrink:0}
         .btn-primary{background-color:var(--cor-primaria)}
         .btn-success{background-color:var(--cor-sucesso)}
+        .btn-ia {background-color: var(--cor-secundaria);} /* NOVA CLASSE PARA O BOTÃO DA IA */
         .main-content{flex-grow:1;overflow-y:auto;padding:15px}
-        .tabs{display:flex;gap:10px;margin-bottom:15px}
-        .tab-btn{flex:1;padding:10px;background:#e9ecef;border:none;border-radius:8px;font-size:1rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--cor-texto-secundario)}
+        .tabs{display:flex;gap:10px;margin-bottom:15px; overflow-x: auto; padding-bottom: 5px;}
+        .tab-btn{flex-shrink: 0; padding:10px 15px;background:#e9ecef;border:none;border-radius:8px;font-size:1rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--cor-texto-secundario)}
         .tab-btn.active{background-color:var(--cor-primaria);color:white}
         .tab-btn[data-tab="adiados"].action-mode{background-color:var(--cor-aviso);color:white;font-weight:bold}
+        .tab-btn[data-tab="ia-precos"].active { background-color: var(--cor-secundaria); color: white;} /* COR DA ABA IA */
         .list-container{display:none}
         .list-container.active{display:block}
         .item-list{list-style:none;padding:0}
@@ -81,6 +83,17 @@
         .modal-content{background:#f0f1f6;padding:20px;border-radius:var(--raio-borda);width:90%;max-width:400px; display: flex; flex-direction: column;}
         #report-paper, #report-view-content{background:white;padding:20px;font-family:'Courier New',Courier,monospace;white-space:pre-wrap;max-height:60vh;overflow-y:auto;border:1px dashed #ccc;margin-bottom:20px}
         .modal-actions{display:flex;gap:10px;justify-content:flex-end}
+        /* ESTILOS PARA A TELA DA IA */
+        .ia-result-item { background: var(--cor-container); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: var(--sombra-painel); }
+        .ia-result-item h3 { margin: 0 0 10px 0; font-size: 1.3rem; color: var(--cor-secundaria); }
+        .ia-offer { border-top: 1px solid var(--cor-borda); padding-top: 10px; margin-top: 10px; }
+        .ia-offer p { margin: 4px 0; }
+        .ia-offer .store { font-weight: bold; }
+        .ia-offer .price { color: var(--cor-sucesso); font-size: 1.1rem; font-weight: bold; }
+        .ia-loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+        .ia-loading-overlay p { font-weight: 500; color: var(--cor-texto-principal); }
+        .spinner { width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(#0000 10%, var(--cor-secundaria)); -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 9px), #000 0); animation: spinner-zp9dkx 1s infinite linear; }
+        @keyframes spinner-zp9dkx { to { transform: rotate(1turn); } }
     </style>
 </head>
 <body>
@@ -108,6 +121,10 @@
                     <input type="text" id="input-novo-item" placeholder="Adicionar item...">
                     <button type="submit" class="btn btn-primary" title="Adicionar">+</button>
                 </form>
+                <!-- BOTÃO DA IA -->
+                <button id="btn-consultar-ia" class="btn btn-ia" title="Consultar Preços com IA">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="12" width="16" height="8" rx="2"/><path d="M2 12h20"/><path d="m18 7-4 4-4-4"/></svg>
+                </button>
                 <button id="btn-finalizar" class="btn btn-success" title="Finalizar Compra e Gerar Relatório">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 </button>
@@ -120,11 +137,19 @@
                 <button class="tab-btn" data-tab="comprados">Comprados</button>
                 <button class="tab-btn" data-tab="adiados">Adiados</button>
                 <button class="tab-btn" data-tab="relatorios">Relatórios</button>
+                <!-- ABA DA IA -->
+                <button class="tab-btn" data-tab="ia-precos">IA Preços</button>
             </div>
             <div id="lista-faltando-container" class="list-container active"><ul id="lista-faltando" class="item-list"></ul></div>
             <div id="lista-comprados-container" class="list-container"><ul id="lista-comprados" class="item-list"></ul></div>
             <div id="lista-adiados-container" class="list-container"><ul id="lista-adiados" class="item-list"></ul></div>
             <div id="lista-relatorios-container" class="list-container"><ul id="lista-relatorios" class="item-list"></ul></div>
+            <!-- CONTAINER PARA RESULTADOS DA IA -->
+            <div id="lista-ia-precos-container" class="list-container" style="position: relative;">
+                <div id="ia-results">
+                    <p style="text-align:center; padding: 20px;">Clique no botão de IA 🤖 para pesquisar os melhores preços dos itens da sua lista "A Comprar".</p>
+                </div>
+            </div>
         </main>
 
         <footer class="calculator-footer">
@@ -177,14 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // CONFIGURAÇÃO DO FIREBASE
     // ===================================================================================
     const firebaseConfig = {
-    apiKey: "AIzaSyCV-mYoq8evZNbMFLQymFgtrpQ1aX_R1oQ",
-    authDomain: "listadofer.firebaseapp.com",
-    databaseURL: "https://listadofer-default-rtdb.firebaseio.com",
-    projectId: "listadofer",
-    storageBucket: "listadofer.firebasestorage.app",
-    messagingSenderId: "651050435319",
-    appId: "1:651050435319:web:cae50f9d5b3069ed9889f2"
-  };
+        apiKey: "AIzaSyCV-mYoq8evZNbMFLQymFgtrpQ1aX_R1oQ",
+        authDomain: "listadofer.firebaseapp.com",
+        databaseURL: "https://listadofer-default-rtdb.firebaseio.com",
+        projectId: "listadofer",
+        storageBucket: "listadofer.appspot.com",
+        messagingSenderId: "651050435319",
+        appId: "1:651050435319:web:cae50f9d5b3069ed9889f2"
+    };
     // ===================================================================================
 
     // --- Inicialização e Autenticação ---
@@ -236,6 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
         reportViewModal: document.getElementById('report-view-modal'),
         reportViewContent: document.getElementById('report-view-content'),
         closeViewModalBtn: document.getElementById('close-view-modal-btn'),
+        // NOVOS SELETORES PARA A IA
+        btnConsultarIA: document.getElementById('btn-consultar-ia'),
+        iaResultsContainer: document.getElementById('ia-results'),
+        iaTabContainer: document.getElementById('lista-ia-precos-container'),
     };
 
     // --- Utilitários ---
@@ -374,6 +403,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ui.printReportBtn.addEventListener('click', interactions.printReport);
             ui.finalizePurchaseBtn.addEventListener('click', interactions.finalizeAndReset);
             ui.toggleCalcBtn.addEventListener('click', interactions.toggleCalculator);
+            // NOVA INTERAÇÃO PARA O BOTÃO DA IA
+            ui.btnConsultarIA.addEventListener('click', ai.startPriceConsultation);
         },
         addItem: (e) => { e.preventDefault(); const nome = ui.input.value.trim(); if (nome) { const newItemId = Date.now(); listRef.child(newItemId).set({ id: newItemId, nome: nome, emoji: getEmojiForItem(nome), status: 'faltando', quantidade: 1, preco: 0 }); ui.input.value = ''; ui.input.focus(); } },
         deleteItem: (id) => { if (confirm('Tem certeza que deseja remover este item?')) { if (state.activeItemId === id) state.activeItemId = null; listRef.child(id).remove(); } },
@@ -430,7 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const location = ui.purchaseLocationInput.value.trim();
             const total = comprados.reduce((acc, i) => acc + (i.preco * i.quantidade), 0);
             
-            // Gera o texto final do relatório, agora com o local
             let reportText = `*** CUPOM FISCAL ***\n\nLOCAL: ${location || 'Não informado'}\nDATA: ${new Date().toLocaleString('pt-BR')}\n--------------------------------\nITEM      QTD    PREÇO    TOTAL\n--------------------------------\n`;
             comprados.forEach(i => { reportText += `${i.nome.substring(0, 8).padEnd(8)} ${String(i.quantidade).padStart(4)} x ${i.preco.toFixed(2).padStart(8)} = ${(i.quantidade * i.preco).toFixed(2).padStart(8)}\n`; });
             reportText += `--------------------------------\nTOTAL A PAGAR: R$ ${total.toFixed(2)}\n\n***** thIAguinho Soluções *****`;
@@ -490,6 +520,186 @@ document.addEventListener('DOMContentLoaded', () => {
             win.document.write(`<html><head><title>Relatório de Compra</title></head><body><pre>${updatedReportText}</pre></body></html>`); 
             win.document.close(); 
             win.print(); 
+        }
+    };
+
+    // ===================================================================================
+    // LÓGICA DA INTELIGÊNCIA ARTIFICIAL (GEMINI)
+    // ===================================================================================
+    const ai = {
+        // 1. Inicia todo o processo de consulta
+        startPriceConsultation: async () => {
+            const itemsToBuy = state.itens.filter(item => item.status === 'faltando');
+            if (itemsToBuy.length === 0) {
+                alert('Adicione itens na lista "A Comprar" antes de consultar os preços.');
+                return;
+            }
+
+            interactions.switchTab('ia-precos');
+            ai.showLoading(true);
+
+            try {
+                const location = await ai.getLocation();
+                const itemNames = itemsToBuy.map(item => item.nome).join(', ');
+                const prompt = ai.createPrompt(itemNames, location);
+                const results = await ai.queryGemini(prompt);
+                ai.renderResults(results);
+            } catch (error) {
+                console.error("Erro na consulta IA:", error);
+                ui.iaResultsContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: var(--cor-perigo);">${error.message}</p>`;
+            } finally {
+                ai.showLoading(false);
+            }
+        },
+
+        // 2. Pega a localização do usuário (GPS ou manual)
+        getLocation: () => {
+            return new Promise((resolve, reject) => {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            resolve(`as coordenadas de GPS: latitude ${position.coords.latitude}, longitude ${position.coords.longitude}`);
+                        },
+                        (error) => {
+                            console.warn("Erro no GPS, pedindo endereço manual.");
+                            const address = prompt("Não consegui pegar sua localização. Por favor, digite seu endereço (Ex: Avenida Paulista, 1000, São Paulo):");
+                            if (address) {
+                                resolve(`o endereço: ${address}`);
+                            } else {
+                                reject(new Error("Localização não fornecida. A consulta foi cancelada."));
+                            }
+                        }
+                    );
+                } else {
+                     const address = prompt("Seu navegador não suporta geolocalização. Por favor, digite seu endereço (Ex: Avenida Paulista, 1000, São Paulo):");
+                     if (address) {
+                        resolve(`o endereço: ${address}`);
+                    } else {
+                        reject(new Error("Localização não fornecida. A consulta foi cancelada."));
+                    }
+                }
+            });
+        },
+        
+        // 3. Monta a pergunta que será enviada para a IA
+        createPrompt: (itemNames, locationInfo) => {
+            return `
+                Aja como um assistente de compras pessoal. Eu preciso que você encontre os 3 melhores preços para os seguintes itens de supermercado: ${itemNames}.
+                Minha localização é baseada em ${locationInfo}.
+                
+                Para cada item da lista, pesquise na internet e em seu conhecimento para encontrar 3 opções de compra, priorizando supermercados e lojas próximas à minha localização.
+                
+                Retorne sua resposta APENAS em formato JSON, como um array de objetos. Cada objeto deve representar um item da minha lista e ter a seguinte estrutura:
+                {
+                  "itemName": "Nome do Item",
+                  "offers": [
+                    {
+                      "store": "Nome do Supermercado",
+                      "price": "R$ XX,XX",
+                      "details": "Marca, peso, etc. (se aplicável)"
+                    },
+                    {
+                      "store": "Nome do Outro Supermercado",
+                      "price": "R$ YY,YY",
+                      "details": "Marca, peso, etc."
+                    },
+                    {
+                      "store": "Nome da Loja Online",
+                      "price": "R$ ZZ,ZZ",
+                      "details": "Marca, peso, etc."
+                    }
+                  ]
+                }
+                Se não encontrar preços para um item, retorne um array vazio para "offers". Não inclua nenhuma outra palavra ou explicação na sua resposta, apenas o JSON.
+            `;
+        },
+
+        // 4. Envia a pergunta para a API do Gemini e recebe a resposta
+        queryGemini: async (prompt) => {
+            // ATENÇÃO: Por segurança, a chave de API não deve ficar aqui em um app de produção.
+            // Para este exemplo, vamos usar um placeholder. No futuro, isso seria feito no servidor.
+            const apiKey = ""; // A API do Gemini Studio (AI Platform) não precisa de chave para testes iniciais
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro na API do Gemini. Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            try {
+                // O texto da resposta da IA vem dentro de uma estrutura complexa
+                const rawJson = data.candidates[0].content.parts[0].text;
+                // Limpamos o texto para garantir que é um JSON válido
+                const cleanedJson = rawJson.replace(/```json/g, '').replace(/```/g, '').trim();
+                return JSON.parse(cleanedJson);
+            } catch (e) {
+                console.error("Erro ao processar JSON da IA:", e);
+                console.log("Resposta bruta da IA:", data.candidates[0].content.parts[0].text);
+                throw new Error("A IA retornou uma resposta em um formato inesperado. Tente novamente.");
+            }
+        },
+
+        // 5. Mostra os resultados na tela
+        renderResults: (results) => {
+            ui.iaResultsContainer.innerHTML = ''; // Limpa resultados antigos
+            if (!results || results.length === 0) {
+                ui.iaResultsContainer.innerHTML = `<p style="text-align:center; padding: 20px;">Não encontrei resultados para sua busca. Tente ser mais específico nos nomes dos itens.</p>`;
+                return;
+            }
+
+            results.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'ia-result-item';
+
+                let offersHtml = '';
+                if (item.offers && item.offers.length > 0) {
+                    item.offers.forEach(offer => {
+                        offersHtml += `
+                            <div class="ia-offer">
+                                <p><span class="store">${offer.store}</span></p>
+                                <p><span class="price">${offer.price}</span> - <span class="details">${offer.details}</span></p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    offersHtml = '<p>Nenhuma oferta encontrada para este item.</p>';
+                }
+
+                itemDiv.innerHTML = `<h3>${getEmojiForItem(item.itemName)} ${item.itemName}</h3> ${offersHtml}`;
+                ui.iaResultsContainer.appendChild(itemDiv);
+            });
+        },
+        
+        // 6. Mostra ou esconde a animação de "carregando"
+        showLoading: (isLoading) => {
+            let overlay = ui.iaTabContainer.querySelector('.ia-loading-overlay');
+            if (isLoading) {
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.className = 'ia-loading-overlay';
+                    overlay.innerHTML = `<div class="spinner"></div><p>Consultando a IA... Isso pode levar um momento.</p>`;
+                    ui.iaTabContainer.appendChild(overlay);
+                }
+            } else {
+                if (overlay) {
+                    overlay.remove();
+                }
+            }
         }
     };
 
