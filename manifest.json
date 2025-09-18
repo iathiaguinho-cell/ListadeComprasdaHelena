@@ -1,6 +1,6 @@
 ﻿{
-  "name": "Lista de Compras da Helena",
-  "short_name": "Compras da Helena",
+  "name": "Lista de Compras",
+  "short_name": "Compras",
   "description": "Aplicativo de lista de compras com calculadora integrada e sincronia na nuvem.",
   "start_url": ".",
   "display": "standalone",
